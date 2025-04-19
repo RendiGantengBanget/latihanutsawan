@@ -2,43 +2,94 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Posting dari S3</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Mohammad Nurendi">
+  <title>Blog Mohammad Nurendi - Daftar Posting dari S3</title>
   <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1356.0.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-      background-color: #f7f7f7;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
     }
-    h1 {
+    header {
+      background-color: #009688;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 36px;
+    }
+    header p {
+      font-size: 18px;
+      margin-top: 5px;
+    }
+    main {
+      padding: 20px;
+    }
+    .content {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
       color: #009688;
+      font-size: 24px;
+      margin-bottom: 10px;
     }
-    ul {
+    .post-list {
       list-style: none;
       padding: 0;
     }
-    li {
-      padding: 8px;
+    .post-item {
       background: #fff;
-      margin-bottom: 12px;
-      border-radius: 5px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
     }
-    img {
-      max-width: 300px;
-      display: block;
-      margin-bottom: 6px;
-      border-radius: 4px;
+    .post-item img {
+      max-width: 100%;
+      border-radius: 8px;
     }
-    a {
+    .post-item a {
       text-decoration: none;
       color: #009688;
+      font-weight: bold;
+    }
+    footer {
+      background-color: #009688;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      position: absolute;
+      width: 100%;
+      bottom: 0;
     }
   </style>
 </head>
 <body>
-  <h1>Daftar Posting dari S3</h1>
-  <ul id="post-list">Loading...</ul>
+
+  <header>
+    <h1>Blog Mohammad Nurendi</h1>
+    <p>Selamat datang di blog saya, tempat berbagi pengalaman dan informasi teknologi.</p>
+  </header>
+
+  <main>
+    <section class="content">
+      <h2>Daftar Posting dari S3</h2>
+      <ul id="post-list" class="post-list">Loading...</ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Mohammad Nurendi. All rights reserved.</p>
+  </footer>
 
   <script>
     AWS.config.update({
@@ -54,18 +105,19 @@
       const list = document.getElementById('post-list');
       list.innerHTML = '';
       if (err) {
-        list.innerHTML = '<li>Gagal memuat data dari S3</li>';
+        list.innerHTML = '<li>Gagal memuat data dari S3. Cek akses dan konfigurasi AWS Anda.</li>';
         console.error(err);
       } else {
         data.Contents.forEach(function(obj) {
           const url = `https://${bucketName}.s3.amazonaws.com/${obj.Key}`;
           const li = document.createElement('li');
+          li.classList.add('post-item');
           
           // Cek apakah file adalah gambar
           const isImage = /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(obj.Key);
           
           if (isImage) {
-            li.innerHTML = `<img src="${url}" alt="${obj.Key}"><br>${obj.Key}`;
+            li.innerHTML = `<img src="${url}" alt="${obj.Key}"><br><strong>${obj.Key}</strong>`;
           } else {
             li.innerHTML = `<a href="${url}" target="_blank">${obj.Key}</a>`;
           }
@@ -75,5 +127,6 @@
       }
     });
   </script>
+
 </body>
 </html>
