@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Posting dari S3</title>
+  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1356.0.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f7f7f7;
+    }
+    h1 {
+      color: #009688;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 8px;
+      background: #fff;
+      margin-bottom: 12px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    img {
+      max-width: 300px;
+      display: block;
+      margin-bottom: 6px;
+      border-radius: 4px;
+    }
+    a {
+      text-decoration: none;
+      color: #009688;
+    }
+  </style>
+</head>
+<body>
+  <h1>Daftar Posting dari S3</h1>
+  <ul id="post-list">Loading...</ul>
+
+  <script>
+    AWS.config.update({
+      accessKeyId: "AKIA1234567890ABCDE", 
+      secretAccessKey: "abc1234567890xyzABCDE=", 
+      region: "us-east-1"
+    });
+
+    const s3 = new AWS.S3();
+    const bucketName = "lattutsbucket";
+
+    s3.listObjectsV2({ Bucket: bucketName }, function(err, data) {
+      const list = document.getElementById('post-list');
+      list.innerHTML = '';
+      if (err) {
+        list.innerHTML = '<li>Gagal memuat data dari S3</li>';
+        console.error(err);
+      } else {
+        data.Contents.forEach(function(obj) {
+          const url = `https://${bucketName}.s3.amazonaws.com/${obj.Key}`;
+          const li = document.createElement('li');
+          
+          // Cek apakah file adalah gambar
+          const isImage = /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(obj.Key);
+          
+          if (isImage) {
+            li.innerHTML = `<img src="${url}" alt="${obj.Key}"><br>${obj.Key}`;
+          } else {
+            li.innerHTML = `<a href="${url}" target="_blank">${obj.Key}</a>`;
+          }
+
+          list.appendChild(li);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
